@@ -8,17 +8,23 @@ class TaskList(QMainWindow, Ui_MainWindow):
 
     def __init__(self):
         super().__init__()
+        '''
+        Initializes TaskList and calls UI. Uses functions to check for existence of task list file, displays the list,
+        and retrieves and displays current date / time.
+        '''
         self.setupUi(self)
         self.file_check()
         self.display_list()
         self.retrieve_datetime()
-        '''
-        Initializing function that creates list object along with date and time being accessed or created.
-        Not sure if this will be multi-user or single user.
-        '''
+
         self.submit_button.clicked.connect(lambda : self.submit_task())
 
     def file_check(self):
+        '''
+        This function checks for the existence of a to do list file. If it exists, no action.
+        If not, it creates the file to be used to store task list data later on.
+        :param path: this is used to check for existence of file in file path.
+        '''
         path = './list.csv'
 
         if os.path.isfile(path) == False:
@@ -27,6 +33,10 @@ class TaskList(QMainWindow, Ui_MainWindow):
                 csv_writer.writerow(['Task', 'Priority', 'Date', 'Time'])
 
     def display_list(self):
+        '''
+        This function displays the existing data in the list.csv file to the screen, pulling
+        that information as a record.
+        '''
         with open('list.csv', 'r', newline='') as csvfile:
             csv_reader = csv.reader(csvfile)
             for row in csv_reader:
@@ -34,6 +44,13 @@ class TaskList(QMainWindow, Ui_MainWindow):
                 self.listWidget.addItem(format_row)
 
     def submit_task(self):
+        '''
+        This function is used when the submit button is clicked. It pulls the data from the input box, priority
+        radio buttons, and date and time widgets for recording in csv file and also displays on the to do list screen.
+        :param priority: this is the value stored that is determined by the priority radio button selected.
+        :param date: this is the formatted date pulled from the dateEdit widget.
+        :param time: this is the formatted time pulled from the timeEdit widget.
+        '''
         priority = ''
         date = self.dateEdit.date().toString('MM-dd-yyyy')
         time = self.timeEdit.time().toString('HH:mm:ss')
@@ -67,6 +84,11 @@ class TaskList(QMainWindow, Ui_MainWindow):
             self.input_edit.setText('')
 
     def retrieve_datetime(self):
+        '''
+        This function pulls the date and time when application is launched so the user knows the time.
+        :param current_time: this is the exact date and time as recorded by the system when app is launched.
+        :param formatted_time: this uses the data from curren_time but formats it in a user-friendly way.
+        '''
         current_time = datetime.datetime.now()
         formatted_time = f'{current_time.month}/{current_time.day}/{current_time.year} {current_time.hour}:{current_time.minute}'
         self.date_time_label.setText(f'Today is: {formatted_time}')
